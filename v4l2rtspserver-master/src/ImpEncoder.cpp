@@ -421,7 +421,6 @@ static void* update_thread(void *p) {
 
             try {
                 ImpEncoder::snap_jpeg(jpeg_buffer);
-                sharedMem.copyImage(jpeg_buffer.data(), jpeg_buffer.size());
             } catch (const std::runtime_error &e) {
                 LOG_S(INFO) << "Failed to read the JPEG stream: " << e.what();
             }
