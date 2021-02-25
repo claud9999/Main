@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
 
+export CROSS_PREFIX='mipsel-linux-musl'
+
 ROOTPATH=$(git rev-parse --show-toplevel)
-echo "setting $ROOTPATH"
-export TOOLCHAIN=${ROOTPATH}/toolchain/bin
-export CROSS_COMPILE=$TOOLCHAIN/mips-linux-gnu-
-export CC=${CROSS_COMPILE}gcc
-export LD=${CROSS_COMPILE}ld
-export CCLD=${CROSS_COMPILE}ld
-export CXX=${CROSS_COMPILE}g++
-export CXXLD=${CROSS_COMPILE}ld
-export CPP=${CROSS_COMPILE}cpp
-export CXXCPP=${CROSS_COMPILE}cpp
-export AR=${CROSS_COMPILE}ar
-export STRIP=${CROSS_COMPILE}strip
+export MUSL=${ROOTPATH}/${CROSS_PREFIX}-cross
+if [ ! -d ${MUSL} ]; then
+    cd ${ROOTPATH}
+    curl -s https://musl.cc/${CROSS_PREFIX}-cross.tgz | tar -xvzf -
+fi
+
+export CC=${MUSL}/bin/${CROSS_PREFIX}-gcc
+export LD=${MUSL}/bin/${CROSS_PREFIX}-ld
+export CCLD=${MUSL}/bin/${CROSS_PREFIX}-ld
+export CXX=${MUSL}/bin/${CROSS_PREFIX}-g++
+export CXXLD=${MUSL}/bin/${CROSS_PREFIX}-ld
+export CPP=${MUSL}/bin/${CROSS_PREFIX}-cpp
+export CXXCPP=${MUSL}/bin/${CROSS_PREFIX}-cpp
+export AR=${MUSL}/bin/${CROSS_PREFIX}-ar
+export STRIP=${MUSL}/bin/${CROSS_PREFIX}-strip
 export INSTALLDIR=${ROOTPATH}/_install
 
-export CFLAGS="-muclibc -O3 -I${INSTALLDIR}/include"
-export CPPFLAGS="-muclibc -O3 -I${INSTALLDIR}/include"
-export CXXFLAGS="-muclibc -O3 -I${INSTALLDIR}/include"
-export LDFLAGS="-muclibc -O3 -L${INSTALLDIR}/lib"
+export CFLAGS="-mmusl -O3 -I${INSTALLDIR}/include -fPIC"
+export CPPFLAGS="-mmusl -O3 -I${INSTALLDIR}/include -fPIC"
+export CXXFLAGS="-mmusl -O3 -I${INSTALLDIR}/include -fPIC"
+export LDFLAGS="-mmusl -O3 -L${INSTALLDIR}/lib -fPIC"

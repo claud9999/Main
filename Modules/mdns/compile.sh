@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo 'installing mDNS'
+
+(
+
 set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
@@ -20,3 +24,13 @@ cd "mDNSResponder-${VERSION}/mDNSPosix"
 make os=linux clean
 make os=linux HAVE_IPV6=0 CC="$CC $CFLAGS" LD="$LD" STRIP="$STRIP" LINKOPTS="-lrt" SAResponder
 cp build/prod/mDNSResponderPosix ${INSTALLDIR}/bin/mDNSResponder
+
+) > compile.log 2>&1
+
+errcode=$?
+
+if [ $errcode -ne 0 ]; then
+    echo 'failed to install mDNS, see mdns/compile.log'
+else
+    echo 'install of mDNS successful'
+fi

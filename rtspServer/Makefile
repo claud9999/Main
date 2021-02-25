@@ -1,28 +1,6 @@
 INCLUDES     = -I./inc -I../Modules/live/live/liveMedia/include/ -I../Modules/live/live/UsageEnvironment/include/ -I../Modules/live/live/groupsock/include/ -I../Modules/live/live/BasicUsageEnvironment/include/ -I../v4l2rtspserver-master/inc/ -I../v4l2rtspserver-tools/ -I../Modules/freetype2/freetype2/include -I../_install/include
 LIBS = ../_install/lib/libimp.so ../_install/lib/libalog.so  ../_install/lib/libimp.so ../_install/lib/libliveMedia.so ../_install/lib//libgroupsock.so ../_install/lib/libUsageEnvironment.so ../_install/lib/libBasicUsageEnvironment.so ../_install/lib/libfreetype.a ../_install/lib/libssl.a ../_install/lib/libtls.a ../_install/lib/libcrypto.a -lpthread
 
-CROSS_COMPILE=../toolchain/bin/mips-linux-gnu-
-
-LD = $(CROSS_COMPILE)ld
-AR = $(CROSS_COMPILE)ar cr
-STRIP = $(CROSS_COMPILE)strip
-#CFLAGS=-muclibc -O3 -lrt $(INCLUDES)
-#CPLUSPLUSFLAGS=$(INCLUDES) -O3 -lrt -std=c++11 -DLOGURU_STACKTRACES=0
-
-LDFLAGS=-muclibc -O3 -lrt -lstdc++ -lpthread -ldl
-
-#CFLAGS = $(INCLUDES) -O3 -Wall -muclibc
-#CPLUSPLUSFLAGS = $(INCLUDES) -O3 -Wall -muclibc -std=c++11 -DLOGURU_STACKTRACES=0
-
-
-LDFLAGS +=  -muclibc -lrt -lstdc++ -lpthread -ldl  
-
-#Compiler and Linker
-CC          := $(CROSS_COMPILE)gcc
-CXX         := $(CROSS_COMPILE)g++
-
-#The Target Binary Program
-CFLAGS      := -O3 -lrt -std=c++11 -DLOGURU_STACKTRACES=0
 TARGET_EXEC ?= rtspServer
 
 BUILD_DIR ?= ./build

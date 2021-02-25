@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo 'installing pcre'
+
+(
+
 set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
@@ -12,8 +16,17 @@ then
 fi
 
 cd pcre-8.43
-#./configure --host=mips-linux-gnu --prefix=${INSTALLDIR} --with-gnu-ld
-./configure --host=mips-linux-gnu --prefix=${INSTALLDIR}
+./configure --host=${CROSS_PREFIX} --prefix=${INSTALLDIR}
 make clean
 make
 make install
+
+) > compile.log 2>&1
+
+errcode=$?
+
+if [ $errcode -ne 0 ]; then
+    echo 'failed to install pcre, see pcre/compile.log'
+else
+    echo 'install of pcre successful'
+fi

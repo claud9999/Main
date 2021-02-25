@@ -4,21 +4,10 @@ cmake_minimum_required(VERSION 2.6)
 get_filename_component(BASENAME ${CMAKE_SOURCE_DIR} NAME)
 project(${BASENAME})
 
-set(CMAKE_C_FLAGS "-Wall")
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O3")
-
-
 # define executable to build
 include_directories("inc")
 aux_source_directory(src SRC_FILES)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
-
-if (COVERAGE)
-	set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERAGE_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_FLAGS}")
-	target_link_libraries(${PROJECT_NAME} gcov)
-endif()
 
 # v4l2wrapper
 include_directories("v4l2wrapper/inc")
@@ -31,7 +20,6 @@ if (NOT V4L2WRAPPER_LIBRARY)
 endif (NOT V4L2WRAPPER_LIBRARY)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${V4L2WRAPPER_LIBRARY})
 
-
 #pthread
 find_package (Threads)
 target_link_libraries (${PROJECT_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
@@ -39,11 +27,9 @@ target_link_libraries (${PROJECT_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 #ALSA
 #target_link_libraries (${PROJECT_NAME} PUBLIC ${ALSA_LIBRARY})
 
-
 find_path(LIBLIVE555_INCLUDE_DIR liveMedia/liveMedia.hh)
 include_directories(../live555/liveMedia/include)
 #include_directories(/src/tmp/Xiaomi-Dafang-Software/live/liveMedia/include)
-
 
 include_directories(../v4l2rtspserver-tools/)
 add_library(sharedmem ../v4l2rtspserver-tools/sharedmem.cpp)
@@ -53,11 +39,9 @@ include_directories("filter")
 add_library(filter filter/g711super.c  filter/noise_remover.c  filter/wave.c filter/mylog.c)
 target_link_libraries(${PROJECT_NAME} filter)
 
-
 #include_directories(../live/liveMedia/)
 foreach (LIBLIVE555_module groupsock liveMedia UsageEnvironment BasicUsageEnvironment)
 	include_directories(../Modules/live/live555/${LIBLIVE555_module}/include)
-
 endforeach (LIBLIVE555_module)
 
 include_directories(../_install/include)
@@ -96,10 +80,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../_i
 target_link_libraries(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../_install/lib/libcrypto.a")
 target_link_libraries(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../_install/lib/libssl.a")
 
-
-
 # Install
 install (TARGETS ${PROJECT_NAME} DESTINATION bin)
-
-
-

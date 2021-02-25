@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo 'installing busybox'
+
+(
+
 set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
@@ -28,3 +32,13 @@ sed -i 's/# CONFIG_FLASH_ERASEALL is not set/CONFIG_FLASH_ERASEALL=y/' .config
 make CROSS_COMPILE=$CROSS_COMPILE
 
 cp busybox ${INSTALLDIR}/bin
+
+) > compile.log 2>&1
+
+errcode=$?
+
+if [ $errcode -ne 0 ]; then
+    echo 'failed to install busybox, see busybox/compile.log'
+else
+    echo 'install of busybox successful'
+fi

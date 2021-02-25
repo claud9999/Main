@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 
+echo 'installing lighttpd'
+
+(
+
 set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
-
-SSLPATH=${INSTALLDIR}
-PCREPATH=${INSTALLDIR}
 
 if [ ! -d lighttpd1.4/.git ]
 then
    git clone https://github.com/lighttpd/lighttpd1.4.git
 fi
 
+export CFLAGS="${CFLAGS} -I$(pwd)/include"
 cd lighttpd1.4/
 ./autogen.sh
 
-export PCRECONFIG=$PCREPATH/bin/pcre-config 
-export PCRE_LIB=$PCREPATH/lib/libpcre.a 
-export CFLAGS="$CFLAGS -DHAVE_PCRE_H=1 -DHAVE_LIBPCRE=1 -I$PCREPATH/include"
-export CPPLAGS="$CFLAGS -DHAVE_PCRE_H=1 -DHAVE_LIBPCRE=1 -I$PCREPATH/include"
+export PCRECONFIG=${INSTALLDIR}/bin/pcre-config 
+export PCRE_LIB=${INSTALLDIR}/lib/libpcre.a 
+export CFLAGS="$CFLAGS -DHAVE_PCRE_H=1 -DHAVE_LIBPCRE=1 -I${INSTALLDIR}/include"
+export CPPLAGS="$CPPFLAGS -DHAVE_PCRE_H=1 -DHAVE_LIBPCRE=1 -I${INSTALLDIR}/include"
  
-LIGHTTPD_STATIC=yes CPPFLAGS=-DLIGHTTPD_STATIC ./configure --prefix=${PWD}/_install --host=mips-linux-gnu --without-mysql --without-zlib --without-bzip2 --disable-ipv6 --enable-static --disable-shared  --with-openssl --with-openssl -with-openssl-includes=$SSLPATH/include --with-openssl-libs=$SSLPATH/lib --with-pcre
+LIGHTTPD_STATIC=yes CPPFLAGS=-DLIGHTTPD_STATIC ./configure --prefix=${PWD}/_install --host=${CROSS_PREFIX} --without-mysql --without-zlib --without-bzip2 --disable-ipv6 --enable-static --disable-shared  --with-openssl --with-openssl -with-openssl-includes=${INSTALLDIR}/include --with-openssl-libs=${INSTALLDIR}/lib --with-pcre
 
 echo "PLUGIN_INIT(mod_alias)" > src/plugin-static.h
 echo "PLUGIN_INIT(mod_auth)" >> src/plugin-static.h
@@ -52,3 +54,13 @@ echo "PLUGIN_INIT(mod_vhostdb)" >> src/plugin-static.h
 
 make -j4
 cp src/lighttpd ${INSTALLDIR}/bin/lighttpd.bin
+
+) > compile.log 2>&1
+
+errcode=$?
+
+if [ $errcode -ne 0 ]; then
+    echo 'failed to install lighttpd, see lighttpd/compile.log'
+else
+    echo 'install of lighttpd successful'
+fi

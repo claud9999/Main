@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo 'installing opus'
+
+(
+
 set -e # fail out if any step fails
 
 . ../../setCompilePath.sh
@@ -13,7 +17,17 @@ then
 	rm opus-1.3.1.tar.gz
 fi
 cd opus-1.3.1/
-./configure --host=mips-linux --prefix=${INSTALLDIR}
+./configure --host=${CROSS_PREFIX} --prefix=${INSTALLDIR}
 make
 cp --preserve=links -L .libs/lib* ${INSTALLDIR}/lib 
 cp include/* ${INSTALLDIR}/include
+
+) > compile.log 2>&1
+
+errcode=$?
+
+if [ $errcode -ne 0 ]; then
+    echo 'failed to install opus, see opus/compile.log'
+else
+    echo 'install of opus successful'
+fi

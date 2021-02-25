@@ -10,9 +10,6 @@
 [submodule "Audio"]
 	path = Audio
 	url = https://github.com/Dafang-Hacks/Audio.git
-[submodule "toolchain"]
-	path = toolchain
-	url = https://github.com/Dafang-Hacks/mips-gcc472-glibc216-64bit.git
 [submodule "uboot"]
 	path = uboot
 	url = https://github.com/Dafang-Hacks/uboot.git
